@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,10 +14,81 @@
             background-color: black;
             color: white;
         }
+        #main {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three';
+        $(function () {// init function
+            let camera, scene, renderer;
+            let geometry, material, mesh;
+
+            init();
+
+            function init() {
+
+                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+                camera.position.z = 1;
+
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x000000);
+
+                geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                material = new THREE.MeshNormalMaterial();
+
+                mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setAnimationLoop(animation);
+                document.body.appendChild(renderer.domElement);
+                renderer.domElement.id = "main";
+
+            }
+
+            function animation(time) {
+
+                mesh.rotation.x = time / 2000;
+                mesh.rotation.y = time / 1000;
+
+                renderer.render(scene, camera);
+
+            }
+
+            let lastMouseEvent;
+            $("#main").mousedown(function(e){
+                $(this).mousemove(function(mouseEvent){
+                    if (lastMouseEvent != null){
+                        let changeX = lastMouseEvent.offsetX - mouseEvent.offsetX;
+                        let changeY = lastMouseEvent.offsetY - mouseEvent.offsetY;
+                        camera.position.x += changeX / 1000.;
+                        camera.position.y -= changeY / 1000.;
+                    }
+                    lastMouseEvent = mouseEvent;
+                });
+            }).mouseup(function(e){
+                $(this).unbind("mousemove");
+                lastMouseEvent = null;
+            });
+            let lastScrollTop = 0;
+            $(window).scroll(function(scrollEvent){
+                let curScrollTop = $(this).scrollTop();
+
+                camera.position.z += (curScrollTop - lastScrollTop) / 100.;
+                lastScrollTop = curScrollTop;
+            });
+        });
+    </script>
     <title>Huseyin Emre Kolcu</title>
 </head>
+
 <body>
-    <h1>Hello World!</h1>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
+
 </html>
