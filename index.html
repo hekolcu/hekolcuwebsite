@@ -19,29 +19,51 @@
             left: 0px;
             top: 0px;
         }
+        ::-webkit-scrollbar {
+            display: none;
+        }
     </style>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Mobile jQuery stuff -->
+    <!-- <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> -->
+    <!-- End of Mobile jQuery stuff -->
+
     <script type="module">
         import * as THREE from 'https://cdn.skypack.dev/three';
         $(function () {// init function
             let camera, scene, renderer;
-            let geometry, material, mesh;
+            let geometry, material, mesh, meshs = [], angles = [], angle = 0;
 
             init();
 
             function init() {
 
-                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-                camera.position.z = 1;
+                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.001, 100);
+                camera.position.z = 0.05;
 
                 scene = new THREE.Scene();
                 scene.background = new THREE.Color(0x000000);
 
-                geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
                 material = new THREE.MeshNormalMaterial();
-
                 mesh = new THREE.Mesh(geometry, material);
                 scene.add(mesh);
+
+                for (let i = 0; i < 2000; i++){
+                    meshs.push(new THREE.Mesh(geometry, material));
+                    meshs[meshs.length - 1].position.x = Math.random() - 0.5;
+                    meshs[meshs.length - 1].position.y = Math.random() - 0.5;
+                    meshs[meshs.length - 1].position.z = Math.random() - 0.5;
+                    if (meshs[meshs.length - 1].position.y > 0 && meshs[meshs.length - 1].position.x > 0)
+                        angles.push(Math.acos(meshs[meshs.length - 1].position.x / meshs[meshs.length - 1].position.y));
+                    else
+                    angles.push(Math.asin(meshs[meshs.length - 1].position.x / meshs[meshs.length - 1].position.y));
+                    scene.add(meshs[meshs.length - 1]);
+                }
 
                 renderer = new THREE.WebGLRenderer({ antialias: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -53,42 +75,62 @@
 
             function animation(time) {
 
-                mesh.rotation.x = time / 2000;
+                mesh.rotation.x = time / 1000;
                 mesh.rotation.y = time / 1000;
+                mesh.rotation.z = time / 1000;
+
+                if (angle < 360)
+                    angle++;
+                else
+                    angle = 0;
+
+                for(let i = 0; i < meshs.length; i++){
+                    meshs[i].rotation.x = time / 1000;
+                    meshs[i].rotation.y = time / 1000;
+                    meshs[i].rotation.z = time / 1000;
+                    meshs[i].position.applyAxisAngle(new THREE.Vector3(1, 1, 1), 0.005);
+                }
 
                 renderer.render(scene, camera);
 
             }
-
+            
             let lastMouseEvent;
-            $("#main").mousedown(function(e){
-                $(this).mousemove(function(mouseEvent){
+            $("#main").on("mousedown", function(e){
+                $(this).on("mousemove", function(mouseEvent){
                     if (lastMouseEvent != null){
+                        let distance = camera.position.distanceTo(mesh.position);
                         let changeX = lastMouseEvent.offsetX - mouseEvent.offsetX;
                         let changeY = lastMouseEvent.offsetY - mouseEvent.offsetY;
-                        camera.position.x += changeX / 1000.;
-                        camera.position.y -= changeY / 1000.;
+                        camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), changeX / 100);
+                        camera.position.applyAxisAngle(new THREE.Vector3(1, 0, 0), changeY / 100);
+                        camera.lookAt(mesh.position);
                     }
                     lastMouseEvent = mouseEvent;
                 });
-            }).mouseup(function(e){
+            }).on("mouseup mouseleave", function(e){
                 $(this).unbind("mousemove");
                 lastMouseEvent = null;
             });
+
             let lastScrollTop = 0;
-            $(window).scroll(function(scrollEvent){
+            $(window).on("scroll", function(scrollEvent){
                 let curScrollTop = $(this).scrollTop();
 
-                camera.position.z += (curScrollTop - lastScrollTop) / 100.;
+                let distance = (curScrollTop - lastScrollTop) / 500.;
+                camera.position.x += camera.position.x * distance;
+                camera.position.y += camera.position.y * distance;
+                camera.position.z += camera.position.z * distance;
+
                 lastScrollTop = curScrollTop;
             });
+            $("body").css({height: "18000px"});
         });
     </script>
     <title>Huseyin Emre Kolcu</title>
 </head>
 
 <body>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
 
 </html>
