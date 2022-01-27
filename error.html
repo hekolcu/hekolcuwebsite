@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+        div#main {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            background-color: white;
+        }
+        div#main div {
+            width: 10%;
+            height: 10%;
+            border-radius: 50%;
+            background-color: black;
+            position: relative;
+            top: 50%;
+            left: 0px;
+        }
+        div#main p {
+            position: fixed;
+            text-align: center;
+            width: 300px;
+            height: 50px;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            background-color: black;
+        }
+    </style>
+    <script>
+        $(function(){
+            $("body").css({height: `${window.innerHeight}px`});
+            $(window).resize(function(e){$("body").css({height: `${window.innerHeight}px`});}).contextmenu(function(e){
+                e.preventDefault();
+                $("#rc").remove();
+                $("body").html($("body").html() + `<div id="rc" style="background-color: red; color: white; position: absolute; top: ${e.pageY}px; left: ${e.pageX}px;"><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target=”_blank”>Hmm...</a></div>`);
+            }).click(function(e){
+                $("#rc").remove();
+            });
+            let changeLeft = 1, changeTop = 2;
+            setInterval(function(){
+                let left = parseInt($("div#main div").css("left").toString().substring(0, $("div#main div").css("left").toString().length - 2));
+                let top = parseInt($("div#main div").css("top").toString().substring(0, $("div#main div").css("top").toString().length - 2));
+                let mainSize = parseInt($("div#main").css("width").toString().substring(0, $("div#main").css("width").toString().length - 2));
+                mainSize -= parseInt($("div#main div").css("width").toString().substring(0, $("div#main div").css("width").toString().length - 2));
+                if (left > mainSize || left < 0) {
+                    changeLeft *= -1;
+                    $("div#main div").css({left: `+=${changeLeft}px`, top: `+=${changeTop}px`})
+                }
+                if (top > mainSize || top < 0) {
+                    changeTop *= -1;
+                    $("div#main div").css({left: `+=${changeLeft}px`, top: `+=${changeTop}px`})
+                }
+                $("div#main div").css({left: `+=${changeLeft}px`, top: `+=${changeTop}px`});
+            }, 16);
+        });
+    </script>
+    <title>Woops...</title>
+</head>
+<body>
+    <div id="main"><p>Woops!<br>Seems like something went wrong...</p><div></div></div>
+</body>
+</html>
